@@ -10,9 +10,6 @@
 
 - include_tasks: configure_netdata.yml
 
-- include_tasks: configure_apache_weblog.yml
-  when: apache_log_format is defined
-
 - include_tasks: configure_netdata_collectors.yml
   when: configure_netdata_collectors == true
 
