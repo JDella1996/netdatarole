@@ -1,0 +1,30 @@
+---
+  - name: Checking for existence of netdata directory
+    stat:
+      path: "{{netdata_install_path}}"
+    register: directory      
+  
+  - name: Removing netdata
+    command: "bash /usr/libexec/netdata/netdata-uninstaller.sh --yes --force"
+    register: output
+    ignore_errors: yes
+    when: directory.stat.exists
+    become: true
+
+  - debug: var=output.stdout_lines
+
+  - name: Removing Netdata User
+    user:
+      name: netdata
+      comment: netdata user
+      group: netdata
+      uid: "{{netdata_user_uid}}"
+      state: absent
+    become: true
+
+  - name: Removing netdata group
+    group:
+      name: netdata
+      state: absent
+    become: true
+

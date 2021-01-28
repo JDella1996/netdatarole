@@ -1,0 +1,6 @@
+---
+# vars file for netdatarole
+
+netdata_collector_files:
+  - { src: "{{role_path}}/files/python.d.conf", dest : "{{netdata_install_path}}/python.d/python.d.conf"}
+  - { src: "{{role_path}}/files/go.d.conf", dest : "{{netdata_install_path}}/go.d/go.d.conf"}

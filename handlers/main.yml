@@ -1,0 +1,22 @@
+---
+# handlers file for netdatarole
+- name: Restart Netdata
+  service: 
+    name: netdata
+    state: restarted
+    enabled: true
+  become: true
+
+- name: Stop Netdata
+  service: 
+    name: netdata
+    state: stopped
+    enabled: true
+  become: true
+
+- name: Start Netdata
+  service: 
+    name: netdata
+    state: started
+    enabled: true
+  become: true

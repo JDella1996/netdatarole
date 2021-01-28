@@ -1,0 +1,22 @@
+---
+  - name: Creating go.d directory in Netdata
+    file:
+      path: "{{netdata_install_path}}/etc/netdata/go.d"
+      owner: netdata
+      group: netdata
+      state: directory
+      mode : '0755'
+    become: true
+    
+  - name: Disabling unused Python collectors and unused Go collectors.
+    copy:
+      src: "{{item.src}}"
+      dest: "{{item.dest}}"
+      owner: netdata
+      group: netdata
+      mode: '0755' 
+    loop: "{{netdata_collector_files}}"
+    become: true
+    notify: Restart Netdata
+
+  

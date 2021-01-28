@@ -1,0 +1,8 @@
+---
+- name: Resetting collectors
+  file:
+    path: "{{item.dest}}"
+    state: absent
+  loop: "{{netdata_collector_files}}"
+  notify: Restart Netdata
+  become: true

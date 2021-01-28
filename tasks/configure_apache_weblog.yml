@@ -1,0 +1,77 @@
+---
+- name: Configuring apache collectors
+  block:    
+      - name: Deleting apache.conf and web_log.conf from hosts.
+        file:
+          path: "{{item}}"
+          state: absent
+        with_items:
+          - "{{netdata_install_path}}/netdata-configs/go.d/apache.conf"
+          - "{{netdata_install_path}}/netdata-configs/go.d/web_log.conf"
+
+      - name: Finding apache instances
+        become: true
+        become_user: root
+        shell: "find . -name httpd.conf | xargs grep Listen | grep ssl"
+        register: apache
+        args:
+          chdir: "{{netdata_install_path}}"
+    
+      - name: Creating empty apache.conf and web_log.conf
+        become: true
+        shell: "touch {{item}}"
+        with_items:
+          - "{{netdata_install_path}}/netdata-configs/go.d/apache.conf"
+          - "{{netdata_install_path}}/netdata-configs/go.d/web_log.conf"
+
+      - name: Change file ownership, group and permissions for apache.conf and web_log.conf
+        file:
+          path: "{{item}}"
+          owner: netdata
+          group: netdata
+          mode: '0755'
+        with_items:
+          - "{{netdata_install_path}}/netdata-configs/go.d/apache.conf"
+          - "{{netdata_install_path}}/netdata-configs/go.d/web_log.conf"
+        become: true
+
+      - name: Adding beginning line to build apache.conf file.
+        lineinfile:
+          line: "jobs:\n" 
+          path: "{{netdata_install_path}}/netdata-config/go.d/apache.conf"
+          insertbefore: BOF
+        become: true
+
+
+      - name: Using very cursed regex to build apache.conf file.
+        lineinfile:
+          line: "\n  - name: {{item | replace ('/conf/httpd.conf:Listen','') | replace ('./','',1) | replace ('.','') | replace (' ','') | replace (':','') | regex_replace('[0-9]','')}}\n    url: https://{{item | replace('443','') | replace (':','') | replace ('./','',1) | replace ('/','') | regex_replace('([A-Za-z])','') | replace ('-','') | replace ('.','',1) | replace (' ','')}}/michael?auto\n    tls_skip_verify: yes\n" 
+          path: "{{netdata_install_path}}/netdata-config/go.d/apache.conf"
+          insertafter: yes.*
+        when: '"OLD" not in item'
+        with_items: "{{apache.stdout_lines}}"
+        become: true
+
+      - name: Adding beginning line to web_log.conf file on {{netdata_hostname}}.
+        lineinfile:
+          line: "jobs:\n" 
+          path: "{{netdata_install_path}}/netdata-configs/go.d/web_log.conf"
+          insertbefore: BOF
+        become: true
+
+      - name: Building entries for web_log.conf file on {{netdata_hostname}}".
+        lineinfile:
+          line: "\n  - name: {{item | replace ('/conf/httpd.conf:Listen','') | replace ('./','',1) | replace ('.','') | replace (' ','') | replace (':','') | regex_replace('[0-9]','')}}\n    path: /export/netsite/ext-admin/logs/{{item | replace ('/conf/httpd.conf:Listen','') | replace ('./','',1) | replace ('.','') | replace (' ','') | replace (':','') | regex_replace('[0-9]','')}}/access\n    log_type: csv\n    csv_config:\n      format: \"{{apachelogformat}}\"" 
+          path: "{{netdata_install_path}}/netdata-configs/go.d/web_log.conf"
+          insertafter: yes.*
+        when: '"OLD" not in item'
+        with_items: "{{apache.stdout_lines}}"
+        become: true
+
+      - name: Restarting NetData
+        notify: Restart NetData
+
+  rescue: 
+    - name: Finding apache instances failed.
+      debug:
+        msg: "No apache instances found on {{netdata_hostname}}"

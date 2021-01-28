@@ -1,0 +1,10 @@
+---
+  - name: Applying netdata.conf to all hosts.
+    template:
+      src: "{{role_path}}/templates/netdata.conf.j2"
+      dest: "{{netdata_install_path}}/netdata.conf"
+      owner: netdata
+      group: netdata
+      mode: '0755'
+    become: true    
+    notify: Restart Netdata

@@ -1,0 +1,35 @@
+---
+  - name: Creating Netdata Download Directory
+    file: 
+      path: "{{download_dir}}"
+      state: directory
+    become: true
+
+  - name: Downloading NetData Installer.
+    get_url: 
+      url: "{{netdata_installer_url}}"
+      dest: "{{download_dir}}"
+    environment: "{{proxy_env}}"
+    register: result
+    become: true
+
+  - name: Change {{netdata_installer}} ownership, group and permissions
+    file:
+      path: "{{download_dir}}/{{netdata_installer}}"
+      owner: netdata
+      group: netdata
+      mode: '0755'
+    become: true
+
+  - name: Installing NetData
+    shell: "./{{netdata_installer}}  --dont-wait --stable-channel --no-updates --disable-telemetry"
+    args:
+      chdir: "{{download_dir}}"
+    environment: "{{proxy_env}}"
+    become: true
+
+  - name: Removing NetData Installer
+    file: 
+      path: "{{download_dir}}/"
+      state: absent
+    become: true

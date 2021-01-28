@@ -1,0 +1,15 @@
+---
+- name: Ensure group netdata exists
+  group:
+    name: netdata
+    state: present
+  become: true
+
+- name: Adding Netdata User
+  user:
+    name: netdata
+    comment: netdata user
+    group: netdata
+    uid: "{{netdata_user_uid}}"
+    state: present
+  become: true
