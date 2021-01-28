@@ -1,7 +1,7 @@
-Role Name
+Netdatarole
 =========
 
-A brief description of the role goes here.
+This role is designed to deploy multipe Netdata instances to be scraped. 
 
 Requirements
 ------------
@@ -10,29 +10,34 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 
 Role Variables
 --------------
+netdata_installer_url: https://my-netdata.io/kickstart.sh 
+Has the url for the installer script
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+netdata_installer: "kickstart.sh"
+Has the name of the installer script
 
-Dependencies
-------------
+proxy_env:
+  https_proxy: ""
+If you are using a proxy
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+download_dir: "/tmp/netdata"
+The download location
 
-Example Playbook
-----------------
+netdata_install_path: "/etc/netdata" 
+The install location
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+netdata_user_uid: 4321
+Creates a user with a set UID
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+log_dir: "/export/netdata"
+The location of logs
 
-License
--------
+netdata_hostname: "{{hostvars[inventory_hostname]['ansible_hostname']}}"
+The name of the host
 
-BSD
+configure_netdata_collectors: false
+Configures the collectors
 
-Author Information
-------------------
+remove_existing_install: false
+Remove existing installs.
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
