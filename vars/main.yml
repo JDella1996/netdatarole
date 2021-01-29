@@ -1,6 +1,25 @@
 ---
 # vars file for netdatarole
 
+download_dir: "/tmp/netdata"
+
+netdata_install_path: "/etc/netdata" 
+
+netdata_user_uid: 4321
+
+log_dir: "/export/netsite/ext-admin/logs/netdata"
+
+netdata_hostname: "{{hostvars[inventory_hostname]['ansible_hostname']}}"
+
+configure_netdata_collectors: false
+
+remove_existing_install: false
+
+#apache_log_format: "%h %l %u %t \\\"%r\\\" %>s %b %{Referer}i %{User-Agent}i %{SSL_PROTOCOL}x %{SSL_CIPHER}x %{SSL_CIPHER_USEKEYSIZE}x \\\"%{outstream}n/%{instream}n %{ratio}n%%\\\" %D %{X-Browser-IP}i"
+ 
 netdata_collector_files:
   - { src: "{{role_path}}/files/python.d.conf", dest : "{{netdata_install_path}}/python.d/python.d.conf"}
   - { src: "{{role_path}}/files/go.d.conf", dest : "{{netdata_install_path}}/go.d/go.d.conf"}
+
+proxy_env:
+  https_proxy: ""

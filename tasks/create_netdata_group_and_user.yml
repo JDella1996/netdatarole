@@ -13,3 +13,4 @@
     uid: "{{netdata_user_uid}}"
     state: present
   become: true
+  

@@ -8,3 +8,4 @@
       mode: '0755'
     become: true    
     notify: Restart Netdata
+    tags: configure

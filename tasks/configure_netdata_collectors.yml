@@ -18,5 +18,4 @@
     loop: "{{netdata_collector_files}}"
     become: true
     notify: Restart Netdata
-
   

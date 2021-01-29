@@ -1,26 +1,9 @@
 ---
 # defaults file for netdatarole
 #netdata_installer_url: https://my-netdata.io/kickstart-static64.sh
-netdata_installer_url: https://my-netdata.io/kickstart.sh
+netdata_installer_url: "https://my-netdata.io/kickstart.sh"
 
 #netdata_installer: "kickstart-static64.sh"
 netdata_installer: "kickstart.sh"
-proxy_env:
-  https_proxy: ""
 
-download_dir: "/tmp/netdata"
-
-netdata_install_path: "/etc/netdata" 
-
-netdata_user_uid: 4321
-
-log_dir: "/export/netsite/ext-admin/logs/netdata"
-
-netdata_hostname: "{{hostvars[inventory_hostname]['ansible_hostname']}}"
-
-configure_netdata_collectors: false
-
-remove_existing_install: false
-
-#apache_log_format: "%h %l %u %t \\\"%r\\\" %>s %b %{Referer}i %{User-Agent}i %{SSL_PROTOCOL}x %{SSL_CIPHER}x %{SSL_CIPHER_USEKEYSIZE}x \\\"%{outstream}n/%{instream}n %{ratio}n%%\\\" %D %{X-Browser-IP}i"
 
